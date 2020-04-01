@@ -1,0 +1,27 @@
+{
+  "name": "errorposition",
+  "version": "1.0.0",
+  "description": "根据错误堆栈和sourceMap文件定位错误位置",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jingjinghahah/errorPosition.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jingjinghahah/errorPosition/issues"
+  },
+  "homepage": "https://github.com/jingjinghahah/errorPosition#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "error-stack-parser": "^2.0.6"
+  }
+}
