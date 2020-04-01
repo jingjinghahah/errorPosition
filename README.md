@@ -1,0 +1,2 @@
+# errorPosition
+根据错误堆栈和sourceMap文件定位错误位置
