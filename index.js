@@ -44,17 +44,38 @@ function parseErr(err) {
     }
 }
 
-async function sourceMapDeal(sourceMapPath, errStack) { 
-    let mapPath = path.join('.', sourceMapPath);
+async function getSourceMapConsumer(sourceMapPath, filename) { 
+    let mapPath = path.join(sourceMapPath, filename + '.map');
     let rawSourceMap = fs.readFileSync(mapPath).toString();
     let consumer = await new SourceMapConsumer(rawSourceMap);
+    return consumer;
+}
+async function sourceMapDeal(sourceMapPath, errStack) { 
     let stack = errStack.stack;
-    return stack.map((value, index) => {
-        return getSourceCode(consumer, value, index);  
-    });
+    let consumerObj = {};
+    let result = [];
+    for (let i = 0; i < stack.length; i++) { 
+        let value = stack[i];
+        let url = value.url;
+        let res = url.match(/\/([A-Za-z_-]+.js)$/)
+        let filename = res && res[1] ? res[1] : false;
+        if (filename && !consumerObj[filename]) {
+            let consumer = await getSourceMapConsumer(sourceMapPath, filename);
+            consumerObj[filename] = consumer;
+        }
+        let obj = getSourceCode(consumerObj[filename] || '', value); 
+        result.push(obj);
+    }
+    return result;
 }
 
-function getSourceCode(consumer,stack,index) { 
+function getSourceCode(consumer, stack) { 
+    if (!consumer) { 
+        return {
+            stack: stack,
+            ret: false
+        };
+    }
     let sm = consumer.originalPositionFor({
         line: parseInt(stack.line),  // 压缩后的行数
         column: parseInt(stack.col)  // 压缩后的列数
@@ -103,4 +124,4 @@ main(`exception: (run [/game_preload/QGame.js] failed) Uncaught TypeError: Canno
     at /game_preload/QGame.js:1:157756
     at /game_preload/QGame.js:1:158427
     at r (/game_preload/QGame.js:1:143) 
-    at /game_preload/QGame.js:1:935`, 'E:\\03code\\devtools\\jsLibs\\dist\\QGame.js.map')
+    at /game_preload/QGame.js:1:935`, 'E:\\03code\\devtools\\jsLibs\\dist')
