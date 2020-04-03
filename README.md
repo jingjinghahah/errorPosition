@@ -1,9 +1,7 @@
 # errorPosition
----
 根据js错误堆栈字符串和sourceMap文件定位错误位置
 
 ## Usage
----
 例如：代码中抛出这样的错误：
 
 ```js
@@ -14,7 +12,10 @@ try {
 }
 ```
 
-得到错误堆栈 `e.stack` 字符串，sourcemap文件路径为E:\\code\\dist，如下代码可对错误堆栈字符串进行解析得到源代码所在位置、行数、列数、报错行代码等信息
+输入：错误堆栈 `e.stack` 字符串，sourcemap文件路径`E:\\code\\dist`
+
+输出：错误在源代码中所在位置、行数、列数、报错行代码等信息
+
 ```js
 const errorPosition = require("errorPosition");
 
