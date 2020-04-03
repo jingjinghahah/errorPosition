@@ -16,8 +16,10 @@ try {
 
 输出：错误在源代码中所在位置、行数、列数、报错行代码等信息
 
+安装：npm install --save error-position
+
 ```js
-const errorPosition = require("errorPosition");
+const errorPosition = require("error-position");
 
 let result = errorPosition(`EvalError: Hello    
     at Object.<anonymous> (/Users/file/errorPosition/index.js:4:9)    
