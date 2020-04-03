@@ -108,10 +108,7 @@ function getSourceCode(consumer, stack) {
     if (smIndex >= 0) {
         // 到源码列表中查到源代码
         var smContent = consumer.sourcesContent[smIndex] || '';
-        // 将源代码串按"行结束标记"拆分为数组形式
         const rawLines = smContent.split(/\r?\n/g);
-        // 输出源码行，因为数组索引从0开始，故行数需要-1
-        console.log(rawLines[sm.line - 1]);
         return {
             code: rawLines[sm.line - 1],
             ...sm,
