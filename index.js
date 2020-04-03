@@ -1,8 +1,7 @@
 const { SourceMapConsumer } = require('source-map')
 const path = require('path')
 const fs = require('fs')
-let a = new EvalError('Hello');
-console.log(a)
+
 /**
  * 输入err：错误堆栈字符串
  * 输入：sourceMap文件路径
@@ -128,24 +127,3 @@ function getSourceCode(consumer, stack) {
 }
 
 module.exports = errorPosition;
-// errorPosition(`exception: (run [/game_preload/QGame.js] failed) Uncaught TypeError: Cannot convert object to primitive value
-//     at sr (/game_preload/QGame.js:16:243776) 
-//     at /game_preload/QGame.js:16:246038
-//     at /game_preload/QGame.js:16:246058
-//     at r (/game_preload/QGame.js:9:164184) 
-//     at /game_preload/QGame.js:16:142779
-//     at r (/game_preload/QGame.js:9:164184) 
-//     at /game_preload/QGame.js:16:135969
-//     at r (/game_preload/QGame.js:9:164184) 
-//     at /game_preload/QGame.js:9:164986
-//     at /game_preload/QGame.js:9:164996
-//     at r (/game_preload/QGame.js:1:143) 
-//     at /game_preload/QGame.js:9:163596
-//     at r (/game_preload/QGame.js:1:143) 
-//     at /game_preload/QGame.js:9:111962
-//     at r (/game_preload/QGame.js:1:143) 
-//     at s (/game_preload/QGame.js:1:157139) 
-//     at /game_preload/QGame.js:1:157756
-//     at /game_preload/QGame.js:1:158427
-//     at r (/game_preload/QGame.js:1:143) 
-//     at /game_preload/QGame.js:1:935`, 'E:\\03code\\devtools\\jsLibs\\dist')

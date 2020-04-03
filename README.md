@@ -1,5 +1,5 @@
 # errorPosition
-根据js错误堆栈字符串和sourceMap文件定位错误位置
+根据 js 错误堆栈字符串和 sourceMap 文件定位错误位置
 
 ## Usage
 例如：代码中抛出这样的错误：
