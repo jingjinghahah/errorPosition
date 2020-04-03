@@ -1,7 +1,8 @@
 const { SourceMapConsumer } = require('source-map')
 const path = require('path')
 const fs = require('fs')
-
+let a = new EvalError('Hello');
+console.log(a)
 /**
  * 输入err：错误堆栈字符串
  * 输入：sourceMap文件路径
