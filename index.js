@@ -1,27 +1,32 @@
 const { SourceMapConsumer } = require('source-map')
 const path = require('path')
 const fs = require('fs')
+
 /**
  * 输入err：错误堆栈字符串
  * 输入：sourceMap文件路径
  * 输出sourceMap：错误位置代码相关信息
  */
-async function main(err, sourceMap) { 
+async function errorPosition(err, sourceMap) { 
     // 解析错误堆栈字符串
-    let errStack = parseErr(err);
+    let errStack = parseError(err);
     // 根据错误堆栈和sourceMap文件找到实际位置
     let result = await sourceMapDeal(sourceMap, errStack);
-    console.log(result);
+    return result;
 }
 
-function parseErr(err) { 
+/**
+ * 解析错误堆栈字符串
+ * @param err 错误堆栈字符串 
+ */
+function parseError(err) { 
     let arr = err.split('\n');
     let stack = [];
-    let msg = '';
+    let message = '';
     arr.forEach(val => {
         val = val.trim();
         if (/^(exception:)/.test(val)) {
-            msg = val;
+            message = val;
         } else if (/^(at )/.test(val)) { 
             let res = val.match(/[(]{0,1}(\S+):(\d+):(\d+)/);
             let res1 = val.match(/^at\s+(\S+)\s+\(/);
@@ -39,17 +44,28 @@ function parseErr(err) {
         }
     });
     return {
-        msg: msg,
+        message: message,
         stack: stack
     }
 }
 
+/**
+ * 获取souceMap的consumer
+ * @param {*} sourceMapPath souceMap文件所在文件夹路径
+ * @param {*} filename sourceMap文件名
+ */
 async function getSourceMapConsumer(sourceMapPath, filename) { 
     let mapPath = path.join(sourceMapPath, filename + '.map');
     let rawSourceMap = fs.readFileSync(mapPath).toString();
     let consumer = await new SourceMapConsumer(rawSourceMap);
     return consumer;
 }
+
+/**
+ * 处理souceMpa文件
+ * @param {*} sourceMapPath souceMap文件所在文件夹路径
+ * @param {*} errStack 错误堆栈
+ */
 async function sourceMapDeal(sourceMapPath, errStack) { 
     let stack = errStack.stack;
     let consumerObj = {};
@@ -57,7 +73,7 @@ async function sourceMapDeal(sourceMapPath, errStack) {
     for (let i = 0; i < stack.length; i++) { 
         let value = stack[i];
         let url = value.url;
-        let res = url.match(/\/([A-Za-z_-]+.js)$/)
+        let res = url.match(/[\/\(\s\\]([A-Za-z_-]+.js)$/)
         let filename = res && res[1] ? res[1] : false;
         if (filename && !consumerObj[filename]) {
             let consumer = await getSourceMapConsumer(sourceMapPath, filename);
@@ -69,6 +85,11 @@ async function sourceMapDeal(sourceMapPath, errStack) {
     return result;
 }
 
+/**
+ * 获取源码所在位置、所在行代码等信息
+ * @param {*} consumer souceMap文件的consumer
+ * @param {*} stack 错误堆栈解析后的信息
+ */
 function getSourceCode(consumer, stack) { 
     if (!consumer) { 
         return {
@@ -104,24 +125,26 @@ function getSourceCode(consumer, stack) {
         };
     }   
 }
-main(`exception: (run [/game_preload/QGame.js] failed) Uncaught TypeError: Cannot convert object to primitive value
-    at sr (/game_preload/QGame.js:16:243776) 
-    at /game_preload/QGame.js:16:246038
-    at /game_preload/QGame.js:16:246058
-    at r (/game_preload/QGame.js:9:164184) 
-    at /game_preload/QGame.js:16:142779
-    at r (/game_preload/QGame.js:9:164184) 
-    at /game_preload/QGame.js:16:135969
-    at r (/game_preload/QGame.js:9:164184) 
-    at /game_preload/QGame.js:9:164986
-    at /game_preload/QGame.js:9:164996
-    at r (/game_preload/QGame.js:1:143) 
-    at /game_preload/QGame.js:9:163596
-    at r (/game_preload/QGame.js:1:143) 
-    at /game_preload/QGame.js:9:111962
-    at r (/game_preload/QGame.js:1:143) 
-    at s (/game_preload/QGame.js:1:157139) 
-    at /game_preload/QGame.js:1:157756
-    at /game_preload/QGame.js:1:158427
-    at r (/game_preload/QGame.js:1:143) 
-    at /game_preload/QGame.js:1:935`, 'E:\\03code\\devtools\\jsLibs\\dist')
+
+module.exports = errorPosition;
+// errorPosition(`exception: (run [/game_preload/QGame.js] failed) Uncaught TypeError: Cannot convert object to primitive value
+//     at sr (/game_preload/QGame.js:16:243776) 
+//     at /game_preload/QGame.js:16:246038
+//     at /game_preload/QGame.js:16:246058
+//     at r (/game_preload/QGame.js:9:164184) 
+//     at /game_preload/QGame.js:16:142779
+//     at r (/game_preload/QGame.js:9:164184) 
+//     at /game_preload/QGame.js:16:135969
+//     at r (/game_preload/QGame.js:9:164184) 
+//     at /game_preload/QGame.js:9:164986
+//     at /game_preload/QGame.js:9:164996
+//     at r (/game_preload/QGame.js:1:143) 
+//     at /game_preload/QGame.js:9:163596
+//     at r (/game_preload/QGame.js:1:143) 
+//     at /game_preload/QGame.js:9:111962
+//     at r (/game_preload/QGame.js:1:143) 
+//     at s (/game_preload/QGame.js:1:157139) 
+//     at /game_preload/QGame.js:1:157756
+//     at /game_preload/QGame.js:1:158427
+//     at r (/game_preload/QGame.js:1:143) 
+//     at /game_preload/QGame.js:1:935`, 'E:\\03code\\devtools\\jsLibs\\dist')
